@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginFragment"
+    android:id="@+id/fragment_login"
+    android:orientation="vertical"
+    android:background="@drawable/mybackground">
+
+        <EditText
+            android:id="@+id/etLogin_userName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="100dp"
+            android:ems="10"
+            android:hint="@string/et_username"
+            android:inputType="textPersonName" />
+
+        <EditText
+            android:id="@+id/etLogin_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ems="10"
+            android:hint="@string/et_password"
+            android:inputType="numberPassword" />
+
+        <Button
+            android:id="@+id/button_Login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingHorizontal="40dp"
+            android:layout_marginTop="50dp"
+            android:text="@string/button_login"
+            android:background="@drawable/backbutton"/>
+
+    <Button
+        android:id="@+id/button_Login_SignUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/button_signUp"
+        android:textSize="12sp"
+        android:background="@drawable/backbutton"/>
+</LinearLayout>
