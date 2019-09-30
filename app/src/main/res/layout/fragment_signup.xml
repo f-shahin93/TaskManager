@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/fragment_signUp"
-    android:background="@drawable/backsignup">
+    android:background="@color/colorViolet1">
 
     <EditText
         android:id="@+id/etSignUP_userName"
@@ -33,6 +33,6 @@
         android:text="@string/button_signUp"
         android:layout_marginTop="10dp"
         android:textSize="12sp"
-        android:background="@drawable/backbutton"/>
+        android:background="@drawable/buttonback"/>
 
 </LinearLayout>

@@ -7,6 +7,14 @@
     android:orientation="vertical"
     tools:context=".TasksListFragment">
 
+    <ImageView
+        android:id="@+id/backEmptyTask"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="200dp"
+        android:layout_gravity="center"
+        android:background="@drawable/taskback"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_item"
         android:layout_width="match_parent"

@@ -19,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.taskmanager.model.Task;
@@ -48,6 +49,7 @@ public class TasksListFragment extends Fragment {
     private FloatingActionButton mFloatingActionButton;
     private TasksRepository mTasksRepository = TasksRepository.getInstance();
     private int mNumCurentPage;
+    private ImageView mIVbackEmptyList;
 
 
     public static TasksListFragment newInstance(List list, int numCurentPage) {
@@ -80,11 +82,8 @@ public class TasksListFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_tasks_list, container, false);
 
-        /*if(mTasksListFragments.size()==0){
-            view.setBackgroundResource(R.drawable.ic_action_add);
-        }*/
-
         mFloatingActionButton = view.findViewById(R.id.floatingaction_add);
+        mIVbackEmptyList = view.findViewById(R.id.backEmptyTask);
 
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,6 +95,13 @@ public class TasksListFragment extends Fragment {
 
             }
         });
+
+        if (mTasksListFragments.size() > 0)
+            mIVbackEmptyList.setVisibility(View.GONE);
+        else if(mTasksListFragments.size()==0){
+            mIVbackEmptyList.setVisibility(View.VISIBLE);
+        }
+
 
         mAdapter = new MyAdapter(mTasksListFragments);
         mRecyclerView = view.findViewById(R.id.recycler_item);
@@ -158,19 +164,20 @@ public class TasksListFragment extends Fragment {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    EditInfoTaskFragment editInfoTaskFragment = EditInfoTaskFragment.newInstance(mNumCurentPage ,mTaskVH.getID());
+                    EditInfoTaskFragment editInfoTaskFragment = EditInfoTaskFragment.newInstance(mNumCurentPage, mTaskVH.getID());
                     editInfoTaskFragment.setTargetFragment(TasksListFragment.this, REQUEST_CODE_EditInfo);
                     editInfoTaskFragment.show(getFragmentManager(), TAG_EDIT_INFO);
                 }
             });
 
         }
-         public void bind(Task task){
-             mTaskVH = task;
-             if (!mTaskVH.getTaskTitle().equals("")) {
-                 mTVitem.setText(String.valueOf(mTaskVH.getTaskTitle().charAt(0)));
-             }
-         }
+
+        public void bind(Task task) {
+            mTaskVH = task;
+            if (!mTaskVH.getTaskTitle().equals("")) {
+                mTVitem.setText(String.valueOf(mTaskVH.getTaskTitle().charAt(0)));
+            }
+        }
     }
 
     @Override
@@ -202,15 +209,20 @@ public class TasksListFragment extends Fragment {
                 mTasksListFragments = mTasksRepository.getTaskListDone();
                 break;
         }
+        if (mTasksListFragments.size() > 0)
+            mIVbackEmptyList.setVisibility(View.GONE);
+        else if(mTasksListFragments.size()==0){
+            mIVbackEmptyList.setVisibility(View.VISIBLE);
+        }
 
         mAdapter.setTaskListAdapter(mTasksListFragments);
         mAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu , MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu ,inflater);
-        inflater.inflate(R.menu.item_menu ,menu);
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.item_menu, menu);
 
     }
 
@@ -239,5 +251,11 @@ public class TasksListFragment extends Fragment {
         Bundle bundle = new Bundle();
         bundle.putSerializable("Bundle list", (Serializable) mTasksListFragments);
         onSaveInstanceState(bundle);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mAdapter.notifyDataSetChanged();
     }
 }

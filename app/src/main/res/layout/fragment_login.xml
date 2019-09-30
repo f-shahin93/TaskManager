@@ -6,7 +6,7 @@
     tools:context=".LoginFragment"
     android:id="@+id/fragment_login"
     android:orientation="vertical"
-    android:background="@drawable/mybackground">
+    android:background="@color/colorViolet1">
 
         <EditText
             android:id="@+id/etLogin_userName"
@@ -35,14 +35,15 @@
             android:paddingHorizontal="40dp"
             android:layout_marginTop="50dp"
             android:text="@string/button_login"
-            android:background="@drawable/backbutton"/>
+            android:background="@drawable/buttonback"/>
 
     <Button
         android:id="@+id/button_Login_SignUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginTop="10dp"
         android:text="@string/button_signUp"
         android:textSize="12sp"
-        android:background="@drawable/backbutton"/>
+        android:background="@drawable/buttonback"/>
 </LinearLayout>
