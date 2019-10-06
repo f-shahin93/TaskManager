@@ -1,18 +1,20 @@
 package com.example.taskmanager.model;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class User {
     private String mUserName;
     private String mPassword;
-    private UUID mId;
+    private UUID mUUID;
 
     public User(String userName, String password) {
         this.mUserName = userName;
         this.mPassword = password;
-        //this.mId = UUID.randomUUID();
+        this.mUUID = UUID.randomUUID();
+    }
+
+    public User(UUID uuid) {
+        this.mUUID = uuid;
     }
 
     public String getUserName() {
@@ -32,6 +34,6 @@ public class User {
     }
 
     public UUID getUUID() {
-        return mId;
+        return mUUID;
     }
 }

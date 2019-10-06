@@ -82,6 +82,7 @@ public class TimePickerFragment extends DialogFragment {
                 }).setView(view).create();
 
     }
+
     private void settime(int hourOfDay, int minute) {
         String am_pm = "";
         Calendar datetime = Calendar.getInstance();

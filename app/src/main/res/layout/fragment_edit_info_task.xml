@@ -14,12 +14,12 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginEnd="16dp"
+        android:background="@drawable/buttonback"
         app:layout_constraintBottom_toBottomOf="@+id/button_editTimePicker"
         app:layout_constraintEnd_toStartOf="@+id/button_editTimePicker"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/button_editTimePicker"
-        android:background="@drawable/backbutton"/>
+        app:layout_constraintTop_toTopOf="@+id/button_editTimePicker" />
 
     <Button
         android:id="@+id/button_editTimePicker"
@@ -28,21 +28,23 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
+        android:background="@drawable/buttonback"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toEndOf="@id/button_editDatePicker"
-        app:layout_constraintTop_toBottomOf="@+id/et_editDescription"
-        android:background="@drawable/backbutton"/>
+        app:layout_constraintTop_toBottomOf="@+id/et_editDescription" />
 
     <EditText
         android:id="@+id/et_editTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:hint="@string/add_title_task"
+        android:padding="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_titleEdit" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/et_editDescription"
@@ -53,52 +55,54 @@
         app:layout_constraintTop_toBottomOf="@+id/et_editTitle"
         tools:layout_editor_absoluteX="16dp" />
 
-    <TextView
+    <!--<TextView
         android:id="@+id/tv_titleEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:text="@string/title"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />-->
 
     <TextView
         android:id="@+id/tv_delete_item"
         android:layout_width="90dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginBottom="16dp"
         android:text="Delete"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinner_editState" />
+        app:layout_constraintBottom_toBottomOf="@+id/tv_save_item"
+        app:layout_constraintEnd_toStartOf="@+id/tv_edit_item"
+        app:layout_constraintStart_toEndOf="@+id/tv_save_item"
+        app:layout_constraintTop_toTopOf="@+id/tv_save_item" />
 
     <TextView
         android:id="@+id/tv_edit_item"
         android:layout_width="90dp"
         android:layout_height="wrap_content"
         android:text="Edit"
-        android:layout_marginLeft="30dp"
         app:layout_constraintBottom_toBottomOf="@+id/tv_delete_item"
-        app:layout_constraintEnd_toStartOf="@id/tv_save_item"
-        app:layout_constraintStart_toEndOf="@+id/tv_delete_item"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintTop_toTopOf="@+id/tv_delete_item" />
 
     <TextView
         android:id="@+id/tv_save_item"
         android:layout_width="90dp"
         android:layout_height="wrap_content"
-        android:text="Cancel"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="50dp"
         android:layout_marginLeft="50dp"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_delete_item"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_delete_item" />
+        android:layout_marginBottom="16dp"
+        android:text="Cancel"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinner_editState" />
 
     <androidx.appcompat.widget.AppCompatSpinner
         android:id="@+id/spinner_editState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="10dp"
         android:prompt="@string/prompt_spinner"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

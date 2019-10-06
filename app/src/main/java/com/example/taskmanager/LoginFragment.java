@@ -7,12 +7,7 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
-import android.os.Parcelable;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,9 +17,6 @@ import android.widget.Toast;
 
 import com.example.taskmanager.model.User;
 import com.example.taskmanager.repository.UserRepository;
-
-import java.io.Serializable;
-import java.util.HashMap;
 
 
 /**
@@ -38,10 +30,12 @@ public class LoginFragment extends Fragment {
     private Button mButtonSignUp;
     private EditText mETUserLogin;
     private EditText mETPasswordLogin;
-    private String mUser;
+    private String mUsername;
     private String mPass;
-    private UserRepository mUserRepository = UserRepository.getInstance();
-    private boolean flag = false;
+    private UserRepository mUserRepository;
+    private boolean flagUsername = false;
+    private boolean flagPassword = false;
+
 
     public static LoginFragment newInstance() {
         Bundle args = new Bundle();
@@ -65,6 +59,8 @@ public class LoginFragment extends Fragment {
         mETUserLogin = view.findViewById(R.id.etLogin_userName);
         mETPasswordLogin = view.findViewById(R.id.etLogin_password);
 
+        mUserRepository = UserRepository.getInstance(getContext());
+
         mButtonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -72,17 +68,18 @@ public class LoginFragment extends Fragment {
                 if (mETUserLogin.getText().toString().equals("") || mETPasswordLogin.getText().toString().equals("")) {
                     Toast.makeText(getActivity(), "Cannot Login!", Toast.LENGTH_LONG).show();
                 } else {
-                    /*if (mUser != null && mPass != null &&
-                            mUser.equals(mETUserLogin.getText() + "") && mPass.equals(mETPasswordLogin.getText() + "")) */
-                    User user = new User(mETUserLogin.getText().toString(), mETPasswordLogin.getText().toString());
-                    flag = mUserRepository.searchUser(user);
-                    if (flag) {
-                        Toast.makeText(getActivity(), "You are logged in!", Toast.LENGTH_LONG).show();
-                        Intent intent = TasksViewPagerActivity.newIntent(getActivity());
-                        // intent.putExtra("Extra Login",user);
-                        intent.putExtra("Extra Username", user.getUserName());
-                        intent.putExtra("Extra password", user.getPassword());
-                        startActivity(intent);
+
+                    flagUsername = mUserRepository.searchUser(mETUserLogin.getText().toString());
+                    if (flagUsername) {
+                        flagPassword = mUserRepository.searchPassword(mETUserLogin.getText().toString(), mETPasswordLogin.getText().toString());
+                        if (flagPassword) {
+                            Toast.makeText(getActivity(), "You are logged in!", Toast.LENGTH_LONG).show();
+                            Intent intent = TasksViewPagerActivity.newIntent(getContext(), mETUserLogin.getText().toString());
+
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(getActivity(), "Incorrect Password!!", Toast.LENGTH_LONG).show();
+                        }
                     } else {
                         Toast.makeText(getActivity(), "this User not exist!!", Toast.LENGTH_LONG).show();
                     }
@@ -98,11 +95,6 @@ public class LoginFragment extends Fragment {
                 signUpFragment.setTargetFragment(LoginFragment.this, REQUEST_CODE_SIGN_UP);
                 signUpFragment.show(getFragmentManager(), TAG_SIGN_UP);
 
-                /*FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.activity_containerLogin, signUpFragment, "LoginFragTOSignFrag")
-                        .addToBackStack("LoginFragTOSignFrag").commit();*/
-
             }
         });
 
@@ -117,18 +109,12 @@ public class LoginFragment extends Fragment {
             return;
 
         if (requestCode == REQUEST_CODE_SIGN_UP) {
-            mUser = data.getStringExtra(SignUpFragment.EXTRA_USERNAME_SignUp);
+            mUsername = data.getStringExtra(SignUpFragment.EXTRA_USERNAME_SignUp);
             mPass = data.getStringExtra(SignUpFragment.EXTRA_PASSWORD_SignUp);
 
             mETUserLogin.setText(data.getStringExtra(SignUpFragment.EXTRA_USERNAME_SignUp));
             mETPasswordLogin.setText(data.getStringExtra(SignUpFragment.EXTRA_PASSWORD_SignUp));
 
-            User user = new User(mUser, mPass);
-            boolean flagAdd = mUserRepository.addUser(user);
-            if (flagAdd){
-
-            }else
-                Toast.makeText(getActivity(), "this User is exist!", Toast.LENGTH_LONG).show();
         }
     }
 

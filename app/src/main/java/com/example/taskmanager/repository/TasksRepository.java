@@ -1,132 +1,220 @@
 package com.example.taskmanager.repository;
 
-import com.example.taskmanager.model.Task;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.CursorWrapper;
+import android.database.sqlite.SQLiteDatabase;
 
+import com.example.taskmanager.model.Task;
+import com.example.taskmanager.model.database.TaskCursorWrapper;
+import com.example.taskmanager.model.database.TaskDataBaseSchema;
+import com.example.taskmanager.model.database.TaskOpenHelper;
+
+import static com.example.taskmanager.model.database.TaskDataBaseSchema.TaskTable.*;
+import static com.example.taskmanager.model.database.TaskDataBaseSchema.TaskTable;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 public class TasksRepository {
 
-    private static TasksRepository instance = new TasksRepository();
-    private List<Task> mTaskListTodo = new ArrayList<>();
-    private List<Task> mTaskListDoing = new ArrayList<>();
-    private List<Task> mTaskListDone = new ArrayList<>();
+    private static TasksRepository instance;
+    private Context mContext;
+    private SQLiteDatabase mDatabase;
 
-    private TasksRepository() {
+
+    private TasksRepository(Context context) {
+        mContext = context.getApplicationContext();
+        mDatabase = new TaskOpenHelper(context).getWritableDatabase();
 
     }
 
-    public List<Task> getTaskListDoing() {
-        return mTaskListDoing;
-    }
+    public static TasksRepository getInstance(Context context) {
+        if (instance == null)
+            instance = new TasksRepository(context);
 
-    public void setTaskListDoing(List<Task> taskListDoing) {
-        mTaskListDoing = taskListDoing;
-    }
-
-    public List<Task> getTaskListDone() {
-        return mTaskListDone;
-    }
-
-    public void setTaskListDone(List<Task> taskListDone) {
-        mTaskListDone = taskListDone;
-    }
-
-    public List<Task> getTaskListTodo() {
-        return mTaskListTodo;
-    }
-
-    public void setTaskListTodo(List<Task> taskListTodo) {
-        this.mTaskListTodo = taskListTodo;
-    }
-
-    public static TasksRepository getInstance() {
-
-        // instance = new TasksRepository();
         return instance;
     }
 
-    public void addTasks(Task task) {
+    public List<Task> getTasksList(int numCurentPage, String username) {
 
-        switch (task.getState()) {
-            case TODO:
-                mTaskListTodo.add(task);
-                break;
-            case DOING:
-                mTaskListDoing.add(task);
-                break;
-            case DONE:
-                mTaskListDone.add(task);
-                break;
-        }
-    }
+        List<Task> mTaskListTodo = new ArrayList<>();
+        List<Task> mTaskListDoing = new ArrayList<>();
+        List<Task> mTaskListDone = new ArrayList<>();
 
-    public Task searchTask(UUID id, int numCurrentPage) {
-        List<Task> mTask;
-        mTask = getList(numCurrentPage);
+        TaskCursorWrapper cursor = (TaskCursorWrapper) queryTasks(
+                null,
+                Cols.USERNAME + " = ?",
+                new String[]{username});
+        try {
+            cursor.moveToFirst();
 
-        for (Task task : mTask) {
-            if (task.getID().equals(id)) {
-                return task;
+            while (!cursor.isAfterLast()) {
+                switch (cursor.getTask().getState()) {
+                    case TODO:
+                        mTaskListTodo.add(cursor.getTask());
+                        break;
+                    case DOING:
+                        mTaskListDoing.add(cursor.getTask());
+                        break;
+                    case DONE:
+                        mTaskListDone.add(cursor.getTask());
+                        break;
+
+                }
+                cursor.moveToNext();
             }
+
+        } finally {
+            cursor.close();
+        }
+
+        switch (numCurentPage) {
+            case 0:
+                return mTaskListTodo;
+            case 1:
+                return mTaskListDoing;
+            case 2:
+                return mTaskListDone;
+
         }
         return null;
     }
 
-    public void update(Task task, int numCurrentPage) {
-        List<Task> mTask;
-        mTask = getList(numCurrentPage);
 
-        for (int i = 0; i < mTask.size(); i++) {
-            if (task.getID().equals(mTask.get(i).getID())) {
-                mTask.set(i, task);
-            }
+    //read
+    public Task getTask(UUID id) {
+        TaskCursorWrapper cursor = (TaskCursorWrapper) queryTasks(
+                null,
+                Cols.UUID + " = ?",
+                new String[]{id.toString()});
+
+        try {
+            cursor.moveToFirst();
+
+            if (cursor == null || cursor.getCount() == 0)
+                return null;
+
+            return cursor.getTask();
+        } finally {
+            cursor.close();
         }
     }
 
-    public void delete(Task task, int numCurrentPage) {
-        List<Task> mTask;
-        mTask = getList(numCurrentPage);
+    public Task getDateTask(String str, String username) {
+        TaskCursorWrapper cursor = (TaskCursorWrapper) queryTasks(
+                null,
+                Cols.USERNAME + " = ?",
+                new String[]{username});
 
-        for (int i = 0; i < mTask.size(); i++) {
-            if (task.getID().equals(mTask.get(i).getID())) {
-                mTask.remove(i);
-            }
+        try {
+            cursor.moveToFirst();
+
+            if (cursor == null || cursor.getCount() == 0)
+                return null;
+
+            SimpleDateFormat dateFormatDate = new SimpleDateFormat("yyyy-MM-dd");
+            String date = dateFormatDate.format(cursor.getTask().getDate());
+
+            SimpleDateFormat dateFormatTime = new SimpleDateFormat("HH:mm");
+            String time = dateFormatTime.format(cursor.getTask().getDate());
+
+            if (date.equals(str) || time.equals(str))
+                return cursor.getTask();
+
+            return null;
+        } finally {
+            cursor.close();
         }
+    }
+
+    public Task searchTask(String str, String username) {
+        TaskCursorWrapper cursor = (TaskCursorWrapper) queryGetTasks(str, username);
+
+        try {
+            cursor.moveToFirst();
+
+            if (cursor == null || cursor.getCount() == 0)
+                return null;
+
+            return cursor.getTask();
+        } finally {
+            cursor.close();
+        }
+
+    }
+
+    public CursorWrapper queryGetTasks(String str, String username) {
+
+        String selectQuery = "SELECT * FROM " + TaskTable.NAME + " WHERE " +
+                Cols.USERNAME + "=\"" + username + "\" AND " +
+                Cols.TITLE + "=\"" + str + "\" OR " + Cols.DESCRIPTION + "=\"" + str + "\" OR " +
+                Cols.TIME + "=\"" + str + "\" OR " + Cols.DATE + "=\"" + str + "\"";
+
+        Cursor cursor = mDatabase.rawQuery(selectQuery, null);
+
+        return new TaskCursorWrapper(cursor);
+    }
+
+
+    public void addTasks(Task task) {
+        ContentValues values = getContentValues(task);
+        mDatabase.insert(NAME, null, values);
+    }
+
+    public void updateTask(Task task) {
+        ContentValues values = getContentValues(task);
+        String where = Cols.UUID + " = ?";
+        String[] whereArgs = new String[]{task.getUUID().toString()};
+        mDatabase.update(NAME, values, where, whereArgs);
+    }
+
+    //delete
+    public void deleteTask(Task task) {
+        String where = Cols.UUID + " = ?";
+        String[] whereArgs = new String[]{task.getUUID().toString()};
+        mDatabase.delete(NAME, where, whereArgs);
+    }
+
+    //delete
+    public void deleteTask(UUID id) {
+        deleteTask(getTask(id));
+    }
+
+    private ContentValues getContentValues(Task task) {
+        ContentValues values = new ContentValues();
+        values.put(Cols.UUID, task.getUUID().toString());
+        values.put(Cols.TITLE, task.getTaskTitle());
+        values.put(Cols.DESCRIPTION, task.getDescription());
+        values.put(Cols.DATE, task.getDate().getTime());
+        values.put(Cols.TIME, task.getTime().getTime());
+        values.put(Cols.STATE, task.getState().name());
+        values.put(Cols.USERNAME, task.getUsername());
+
+        return values;
+    }
+
+    private CursorWrapper queryTasks(String[] columns, String where, String[] whereArgs) {
+        Cursor cursor = mDatabase.query(NAME,
+                columns,
+                where,
+                whereArgs,
+                null,
+                null,
+                null);
+
+        return new TaskCursorWrapper(cursor);
     }
 
     public void deleteAll() {
+        mDatabase.delete(NAME, null, null);
 
-        for (int i = 0; i < mTaskListTodo.size(); i++) {
-            mTaskListTodo.remove(i);
-        }
-        for (int i = 0; i < mTaskListDoing.size(); i++) {
-            mTaskListDoing.remove(i);
-        }
-        for (int i = 0; i < mTaskListDone.size(); i++) {
-            mTaskListDone.remove(i);
-        }
-    }
-
-    public List getList(int numCurrentPage) {
-
-        switch (numCurrentPage) {
-            case 0: {
-                return mTaskListTodo;
-
-            }
-            case 1: {
-                return mTaskListDoing;
-            }
-            case 2: {
-                return mTaskListDone;
-            }
-        }
-        return null;
     }
 
 }
-
-
-

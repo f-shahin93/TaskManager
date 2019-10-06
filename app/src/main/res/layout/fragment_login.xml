@@ -16,7 +16,10 @@
             android:layout_marginTop="100dp"
             android:ems="10"
             android:hint="@string/et_username"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:background="@drawable/back_edit_text"
+            android:drawableLeft="@drawable/ic_logout"
+            android:padding="15dp"/>
 
         <EditText
             android:id="@+id/etLogin_password"
@@ -25,7 +28,11 @@
             android:layout_gravity="center"
             android:ems="10"
             android:hint="@string/et_password"
-            android:inputType="numberPassword" />
+            android:inputType="numberPassword"
+            android:background="@drawable/back_edit_text"
+            android:drawableLeft="@drawable/ic_password_icon"
+            android:padding="15dp"
+            android:layout_marginTop="5dp"/>
 
         <Button
             android:id="@+id/button_Login"

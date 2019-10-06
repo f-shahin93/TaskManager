@@ -26,6 +26,9 @@
     <string name="prompt_spinner">choose task state</string>
     <string name="button_save">Save</string>
     <string name="button_cancel">Cancel</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="search_task">Search Task</string>
+    <string name="logout_menu">Logout</string>
     <string-array name="array_state_spinner">
         <item>TODO</item>
         <item>DOING</item>

@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.taskmanager.model.Task;
 import com.example.taskmanager.model.TasksState;
@@ -46,6 +47,7 @@ public class EditInfoTaskFragment extends DialogFragment {
     public static final String ARG_NUM_CURENT_PAGE = "Arg numcurentPage";
     public static final String ARG_ID_EDIT_TASK = "ARG_ID_EDIT_TASK";
     public static final String BUNDLE_EDIT_DATE_TASK = "bundle edit dateTask";
+    public static final String EXTRA_EDIT = "Extra edit";
 
     private Spinner mSpinner;
     private ArrayAdapter<String> mArrayAdapter;
@@ -63,6 +65,7 @@ public class EditInfoTaskFragment extends DialogFragment {
     private int mNumCurrentPage;
     private UUID mId;
     private TasksState mTasksState;
+    private String mUsername;
 
 
     public EditInfoTaskFragment() {
@@ -78,6 +81,14 @@ public class EditInfoTaskFragment extends DialogFragment {
         return fragment;
     }
 
+    public static EditInfoTaskFragment newInstance(UUID id) {
+        EditInfoTaskFragment fragment = new EditInfoTaskFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_ID_EDIT_TASK, id);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,7 +96,8 @@ public class EditInfoTaskFragment extends DialogFragment {
         if (getArguments() != null) {
             mNumCurrentPage = getArguments().getInt(ARG_NUM_CURENT_PAGE);
             mId = (UUID) getArguments().getSerializable(ARG_ID_EDIT_TASK);
-            mTask = TasksRepository.getInstance().searchTask(mId, mNumCurrentPage);
+            mTask = TasksRepository.getInstance(getContext()).getTask(mId);
+            mUsername = mTask.getUsername();
         }
     }
 
@@ -96,7 +108,7 @@ public class EditInfoTaskFragment extends DialogFragment {
         LayoutInflater inflater = LayoutInflater.from(getActivity());
         View view = inflater.inflate(R.layout.fragment_edit_info_task, null, false);
 
-        mTVTitle = view.findViewById(R.id.tv_titleEdit);
+        //mTVTitle = view.findViewById(R.id.tv_titleEdit);
         mETTitleTask = view.findViewById(R.id.et_editTitle);
         mETDescriptionTask = view.findViewById(R.id.et_editDescription);
         mButtonDatePicher = view.findViewById(R.id.button_editDatePicker);
@@ -112,21 +124,9 @@ public class EditInfoTaskFragment extends DialogFragment {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
         mButtonDatePicher.setText(simpleDateFormat.format(mTask.getDate()));
 
-        SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("HH/mm");
+        SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("HH:mm");
         mButtonTimePicher.setText(simpleDateFormat1.format(mTask.getDate()));
 
-
-        switch (mTask.getState()) {
-            case TODO:
-                mSpinner.getItemAtPosition(0);
-                break;
-            case DOING:
-                mSpinner.getItemAtPosition(1);
-                break;
-            case DONE:
-                mSpinner.getItemAtPosition(2);
-                break;
-        }
 
         mListStatusSpinnerItem = new ArrayList<>();
         mListStatusSpinnerItem.add(String.valueOf(TasksState.TODO));
@@ -138,11 +138,22 @@ public class EditInfoTaskFragment extends DialogFragment {
         mArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(mArrayAdapter);
 
+        switch (mTask.getState()) {
+            case TODO:
+                mSpinner.setSelection(0);
+                break;
+            case DOING:
+                mSpinner.setSelection(1);
+                break;
+            case DONE:
+                mSpinner.setSelection(2);
+                break;
+        }
+
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
                 tempSpItem = adapterView.getItemAtPosition(position).toString();
-               // mTasksState = (TasksState) adapterView.getItemAtPosition(position);
             }
 
             @Override
@@ -173,7 +184,7 @@ public class EditInfoTaskFragment extends DialogFragment {
         mTvDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                TasksRepository.getInstance().delete(mTask, mNumCurrentPage);
+                TasksRepository.getInstance(getContext()).deleteTask(mTask.getUUID());
 
                 Intent intent = new Intent();
                 Fragment fragment = getTargetFragment();
@@ -186,24 +197,25 @@ public class EditInfoTaskFragment extends DialogFragment {
         mTvEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                if (tempSpItem.equals(mTask.getState().toString())) {
+                if(mETTitleTask.getText().toString().equals("") || mETDescriptionTask.getText().toString().equals("")){
+                    Toast.makeText(getActivity(), "Please fill the blank!", Toast.LENGTH_SHORT).show();
+                }else {
                     mTask.setTaskTitle(mETTitleTask.getText().toString());
                     mTask.setDescription(mETDescriptionTask.getText().toString());
-                    TasksRepository.getInstance().update(mTask, mNumCurrentPage);
-                }
-                else if (!(tempSpItem.equals(mTask.getState().toString()))) {
                     mTasksState = TasksState.valueOf(tempSpItem);
                     mTask.setState(mTasksState);
-                    TasksRepository.getInstance().addTasks(mTask);
-                    TasksRepository.getInstance().delete(mTask, mNumCurrentPage);
+                    mTask.setUsername(mUsername);
+                    TasksRepository.getInstance(getContext()).updateTask(mTask);
+
+                    Intent intent = new Intent();
+                    Fragment fragment = getTargetFragment();
+                    fragment.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+
+                    /*TasksViewPagerActivity activity = (TasksViewPagerActivity) getActivity();
+                    activity.updateAllFragment();*/
+
+                    dismiss();
                 }
-
-                Intent intent = new Intent();
-                Fragment fragment = getTargetFragment();
-                fragment.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-
-                dismiss();
             }
         });
 

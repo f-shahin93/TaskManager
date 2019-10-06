@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.taskmanager.model.Task;
 import com.example.taskmanager.model.TasksState;
@@ -44,6 +45,7 @@ public class AddInfoTaskFragment extends DialogFragment {
     public static final String TAG_TIME_PICKER = "Tag time picker";
     public static final String EXTRA_TASK_ADD_INFO = "EXTRA task Add Info";
     public static final String ARG_NUM_CURENT_PAGE = "Arg mNumCurentPage";
+    public static final String ARG_USERNAME = "ARG_USERNAME";
 
     private Spinner mSpinner;
     private ArrayAdapter<String> mArrayAdapter;
@@ -57,12 +59,14 @@ public class AddInfoTaskFragment extends DialogFragment {
     String tempSpItem;
     private String am_pm;
     private int mNumCurentPage;
+    private String mUsername;
 
 
-    public static AddInfoTaskFragment newInstance(int numCurentPage) {
+    public static AddInfoTaskFragment newInstance(int numCurentPage ,String username) {
         Bundle args = new Bundle();
         AddInfoTaskFragment fragment = new AddInfoTaskFragment();
         args.putInt(ARG_NUM_CURENT_PAGE,numCurentPage);
+        args.putString(ARG_USERNAME,username);
         fragment.setArguments(args);
         return fragment;
     }
@@ -76,8 +80,10 @@ public class AddInfoTaskFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mNumCurentPage = getArguments().getInt(ARG_NUM_CURENT_PAGE);
+            mUsername = getArguments().getString(ARG_USERNAME);
         }
     }
+
 
     @NonNull
     @Override
@@ -86,7 +92,7 @@ public class AddInfoTaskFragment extends DialogFragment {
         LayoutInflater inflater = LayoutInflater.from(getActivity());
         View view = inflater.inflate(R.layout.fragment_add_info_task, null, false);
 
-        mTVTitle = view.findViewById(R.id.tv_title);
+        //mTVTitle = view.findViewById(R.id.tv_title);
         mETTitleTask = view.findViewById(R.id.et_addTitle);
         mETDescriptionTask = view.findViewById(R.id.et_addDescription);
         mButtonDatePicher = view.findViewById(R.id.button_addDatePicker);
@@ -95,10 +101,12 @@ public class AddInfoTaskFragment extends DialogFragment {
 
         mTask = new Task();
 
-        SimpleDateFormat localDateFormat = new SimpleDateFormat("HH:mm:ss");
+        SimpleDateFormat localDateFormat = new SimpleDateFormat("HH:mm");
         mButtonTimePicher.setText(localDateFormat.format(mTask.getDate()));
         SimpleDateFormat localDateFormat1 = new SimpleDateFormat("yyyy/MM/dd");
         mButtonDatePicher.setText(localDateFormat1.format(mTask.getDate()));
+
+        mTask.setTime(mTask.getDate());
 
         mListStatusSpinnerItem = new ArrayList<>();
         mListStatusSpinnerItem.add(String.valueOf(TasksState.TODO));
@@ -152,22 +160,28 @@ public class AddInfoTaskFragment extends DialogFragment {
                 .setPositiveButton(R.string.button_save, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        mTask.setTaskTitle(mETTitleTask.getText().toString());
-                        mTask.setDescription(mETDescriptionTask.getText().toString());
+                        if(mETTitleTask.getText().toString().equals("") || mETDescriptionTask.getText().toString().equals("")){
+                            Toast.makeText(getActivity(), "Please fill the blank!", Toast.LENGTH_SHORT).show();
+                        }else {
+                            mTask.setTaskTitle(mETTitleTask.getText().toString());
+                            mTask.setDescription(mETDescriptionTask.getText().toString());
 
-                        if (tempSpItem.equals(TasksState.TODO.name())) {
-                            mTask.setState(TasksState.TODO);
-                        } else if (tempSpItem.equals(TasksState.DOING.name())) {
-                            mTask.setState(TasksState.DOING);
-                        } else if (tempSpItem.equals(TasksState.DONE.name())) {
-                            mTask.setState(TasksState.DONE);
+                            if (tempSpItem.equals(TasksState.TODO.name())) {
+                                mTask.setState(TasksState.TODO);
+                            } else if (tempSpItem.equals(TasksState.DOING.name())) {
+                                mTask.setState(TasksState.DOING);
+                            } else if (tempSpItem.equals(TasksState.DONE.name())) {
+                                mTask.setState(TasksState.DONE);
+                            }
+                            mTask.setUsername(mUsername);
+
+                            TasksRepository.getInstance(getContext()).addTasks(mTask);
+
+                            Intent intent = new Intent();
+                            intent.putExtra(EXTRA_TASK_ADD_INFO, mTask);
+                            Fragment fragment = getTargetFragment();
+                            fragment.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
                         }
-                        TasksRepository.getInstance().addTasks(mTask);
-
-                        Intent intent = new Intent();
-                        intent.putExtra(EXTRA_TASK_ADD_INFO, mTask);
-                        Fragment fragment = getTargetFragment();
-                        fragment.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
                     }
                 })
                 .setView(view).create();

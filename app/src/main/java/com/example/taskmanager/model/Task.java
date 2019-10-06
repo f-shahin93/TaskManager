@@ -7,12 +7,23 @@ import java.util.Random;
 import java.util.UUID;
 
 public class Task implements Serializable {
-    private UUID mID;
+    private UUID mUUID;
     private String mTaskTitle;
     private String mDescription;
     private Date mDate;
     private Date mTime;
     private TasksState mState;
+    private String username;
+
+    public Task() {
+        mUUID = UUID.randomUUID();
+        mDate = new Date();
+    }
+
+    public Task(UUID uuid) {
+        mUUID = uuid;
+        mDate = new Date();
+    }
 
     public Task(String taskTitle) {
         mTaskTitle = taskTitle;
@@ -28,13 +39,16 @@ public class Task implements Serializable {
         }
     }
 
-    public UUID getID() {
-        return mID;
+    public String getUsername() {
+        return username;
     }
 
-    public Task() {
-        mID = UUID.randomUUID();
-        mDate =generateRandomDate();
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public UUID getUUID() {
+        return mUUID;
     }
 
     public String getDescription() {
@@ -79,26 +93,12 @@ public class Task implements Serializable {
         mState = state;
     }
 
-    private Date generateRandomDate() {
-        GregorianCalendar gc = new GregorianCalendar();
-        int year = randBetween(2000, 2019);
-        gc.set(gc.YEAR, year);
-        int dayOfYear = randBetween(1, gc.getActualMaximum(gc.DAY_OF_YEAR));
-        gc.set(gc.DAY_OF_YEAR, dayOfYear);
-
-        return gc.getTime();
-    }
-
-    private int randBetween(int start, int end) {
-        return start + (int)Math.round(Math.random() * (end - start));
-    }
-
-    @Override
+    /*@Override
     public String toString() {
         System.out.println();
         return "Tasks{" +
                 "mTaskTitle='" + mTaskTitle + '\'' +
                 ", mState=" + mState +
                 '}';
-    }
+    }*/
 }
