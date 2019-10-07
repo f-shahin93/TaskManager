@@ -48,6 +48,8 @@ public class EditInfoTaskFragment extends DialogFragment {
     public static final String ARG_ID_EDIT_TASK = "ARG_ID_EDIT_TASK";
     public static final String BUNDLE_EDIT_DATE_TASK = "bundle edit dateTask";
     public static final String EXTRA_EDIT = "Extra edit";
+    public static final String BUNDLE_BUTTON_TIME = "BUNDLE_BUTTON_TIME";
+    public static final String BUNDLE_BUTTON_DATE = "BUNDLE_BUTTON_DATE";
 
     private Spinner mSpinner;
     private ArrayAdapter<String> mArrayAdapter;
@@ -127,6 +129,10 @@ public class EditInfoTaskFragment extends DialogFragment {
         SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("HH:mm");
         mButtonTimePicher.setText(simpleDateFormat1.format(mTask.getDate()));
 
+        if(savedInstanceState != null){
+            mButtonTimePicher.setText(savedInstanceState.getString(BUNDLE_BUTTON_TIME));
+            mButtonDatePicher.setText( savedInstanceState.getString(BUNDLE_BUTTON_DATE));
+        }
 
         mListStatusSpinnerItem = new ArrayList<>();
         mListStatusSpinnerItem.add(String.valueOf(TasksState.TODO));
@@ -251,6 +257,14 @@ public class EditInfoTaskFragment extends DialogFragment {
             SimpleDateFormat localDateFormat = new SimpleDateFormat("HH:mm");
             mButtonTimePicher.setText(localDateFormat.format(mTask.getDate()));
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(BUNDLE_BUTTON_TIME,mButtonTimePicher.getText().toString());
+        outState.putString(BUNDLE_BUTTON_DATE,mButtonDatePicher.getText().toString());
+
     }
 
 }

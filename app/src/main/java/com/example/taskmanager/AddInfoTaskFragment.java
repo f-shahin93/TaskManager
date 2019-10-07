@@ -46,6 +46,8 @@ public class AddInfoTaskFragment extends DialogFragment {
     public static final String EXTRA_TASK_ADD_INFO = "EXTRA task Add Info";
     public static final String ARG_NUM_CURENT_PAGE = "Arg mNumCurentPage";
     public static final String ARG_USERNAME = "ARG_USERNAME";
+    public static final String BUNDLE_BUTTON_DATE = "bundle button date";
+    public static final String BUNDLE_BUTTON_TIME = "bundle button time";
 
     private Spinner mSpinner;
     private ArrayAdapter<String> mArrayAdapter;
@@ -60,6 +62,7 @@ public class AddInfoTaskFragment extends DialogFragment {
     private String am_pm;
     private int mNumCurentPage;
     private String mUsername;
+
 
 
     public static AddInfoTaskFragment newInstance(int numCurentPage ,String username) {
@@ -78,6 +81,7 @@ public class AddInfoTaskFragment extends DialogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mNumCurentPage = getArguments().getInt(ARG_NUM_CURENT_PAGE);
             mUsername = getArguments().getString(ARG_USERNAME);
@@ -105,6 +109,11 @@ public class AddInfoTaskFragment extends DialogFragment {
         mButtonTimePicher.setText(localDateFormat.format(mTask.getDate()));
         SimpleDateFormat localDateFormat1 = new SimpleDateFormat("yyyy/MM/dd");
         mButtonDatePicher.setText(localDateFormat1.format(mTask.getDate()));
+
+        if(savedInstanceState != null){
+            mButtonTimePicher.setText(savedInstanceState.getString(BUNDLE_BUTTON_TIME));
+            mButtonDatePicher.setText( savedInstanceState.getString(BUNDLE_BUTTON_DATE));
+        }
 
         mTask.setTime(mTask.getDate());
 
@@ -209,5 +218,13 @@ public class AddInfoTaskFragment extends DialogFragment {
             mButtonTimePicher.setText(localDateFormat.format(mTask.getTime())+am_pm);
 
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(BUNDLE_BUTTON_TIME,mButtonTimePicher.getText().toString());
+        outState.putString(BUNDLE_BUTTON_DATE,mButtonDatePicher.getText().toString());
+
     }
 }

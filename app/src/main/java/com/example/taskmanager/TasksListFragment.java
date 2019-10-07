@@ -375,7 +375,7 @@ public class TasksListFragment extends Fragment {
         }
     }
 
-    @Override
+  /*  @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         Log.d(TAG, "onSave()" + " " + mNumCurentPage);
@@ -383,7 +383,7 @@ public class TasksListFragment extends Fragment {
             updateUI();
         }
     }
-
+*/
     @Override
     public void onResume() {
         super.onResume();

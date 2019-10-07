@@ -14,8 +14,6 @@ import com.example.taskmanager.model.database.TaskOpenHelper;
 import static com.example.taskmanager.model.database.TaskDataBaseSchema.TaskTable.*;
 import static com.example.taskmanager.model.database.TaskDataBaseSchema.TaskTable;
 
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -113,21 +111,25 @@ public class TasksRepository {
                 Cols.USERNAME + " = ?",
                 new String[]{username});
 
+        SimpleDateFormat dateFormatDate = new SimpleDateFormat("yyyy/MM/dd");
+        SimpleDateFormat dateFormatTime = new SimpleDateFormat("HH:mm");
+
         try {
             cursor.moveToFirst();
 
             if (cursor == null || cursor.getCount() == 0)
                 return null;
 
-            SimpleDateFormat dateFormatDate = new SimpleDateFormat("yyyy-MM-dd");
-            String date = dateFormatDate.format(cursor.getTask().getDate());
+            while (!cursor.isAfterLast()) {
 
-            SimpleDateFormat dateFormatTime = new SimpleDateFormat("HH:mm");
-            String time = dateFormatTime.format(cursor.getTask().getDate());
+                String date = dateFormatDate.format(cursor.getTask().getDate());
+                String time = dateFormatTime.format(cursor.getTask().getTime());
 
-            if (date.equals(str) || time.equals(str))
-                return cursor.getTask();
+                if (date.equals(str) || time.equals(str))
+                    return cursor.getTask();
 
+                cursor.moveToNext();
+            }
             return null;
         } finally {
             cursor.close();
@@ -155,7 +157,8 @@ public class TasksRepository {
         String selectQuery = "SELECT * FROM " + TaskTable.NAME + " WHERE " +
                 Cols.USERNAME + "=\"" + username + "\" AND " +
                 Cols.TITLE + "=\"" + str + "\" OR " + Cols.DESCRIPTION + "=\"" + str + "\" OR " +
-                Cols.TIME + "=\"" + str + "\" OR " + Cols.DATE + "=\"" + str + "\"";
+                Cols.TIME + "=\""
+                + str +"\" OR " + Cols.DATE + "=\"" + str + "\"";
 
         Cursor cursor = mDatabase.rawQuery(selectQuery, null);
 
