@@ -1,35 +1,33 @@
 package com.example.taskmanager.repository;
 
-
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.CursorWrapper;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.example.taskmanager.model.Task;
+import com.example.taskmanager.greendao.TaskOpenHelper;
+import com.example.taskmanager.model.DaoMaster;
+import com.example.taskmanager.model.DaoSession;
 import com.example.taskmanager.model.User;
-import com.example.taskmanager.model.database.TaskDataBaseSchema;
-import com.example.taskmanager.model.database.TaskOpenHelper;
-import com.example.taskmanager.model.database.UserCursorWrapper;
+import com.example.taskmanager.model.UserDao;
+
+import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
-
-import static com.example.taskmanager.model.database.TaskDataBaseSchema.UserTable.*;
 
 public class UserRepository {
     private static UserRepository instance;
     private List<User> listUsername = new ArrayList<>();
     private Context mContext;
-    private SQLiteDatabase mDatabase;
-
+    private UserDao mUserDao;
 
     private UserRepository(Context context) {
         mContext = context.getApplicationContext();
-        mDatabase = new TaskOpenHelper(context).getWritableDatabase();
+
+        SQLiteDatabase db = new TaskOpenHelper(mContext).getWritableDatabase();
+        DaoMaster daoMaster = new DaoMaster(db);
+        DaoSession daoSession = daoMaster.newSession();
+        mUserDao = daoSession.getUserDao();
     }
 
     public static UserRepository getInstance(Context context) {
@@ -49,105 +47,50 @@ public class UserRepository {
 
     //read
     public User getUser(UUID id) {
-        UserCursorWrapper cursor = (UserCursorWrapper) queryUsers(
-                null,
-                Cols.UUID + " = ?",
-                new String[]{id.toString()});
-
-        try {
-            cursor.moveToFirst();
-
-            if (cursor == null || cursor.getCount() == 0)
-                return null;
-
-            return cursor.getUser();
-        } finally {
-            cursor.close();
-        }
+        return mUserDao.queryBuilder()
+                .where(UserDao.Properties.MUUID.eq(id))
+                .unique();
     }
 
     //search by UUID
     public boolean searchUser(UUID id) {
-        UserCursorWrapper cursor = (UserCursorWrapper) queryUsers(
-                null,
-                Cols.UUID + " = ?",
-                new String[]{id.toString()});
 
-        try {
-            cursor.moveToFirst();
+        User user = mUserDao.queryBuilder()
+                .where(UserDao.Properties.MUUID.eq(id))
+                .unique();
 
-            if (cursor == null || cursor.getCount() == 0)
-                return false;
-
-            cursor.getUser();
-            return true;
-        } finally {
-            cursor.close();
-        }
+        if(user == null)
+            return false;
+        else return true;
     }
 
-    //search UserName
+    //search UserName by username
     public boolean searchUser(String username) {
-        UserCursorWrapper cursor = (UserCursorWrapper) queryUsers(
-                null,
-                Cols.USERNAME + " = ?",
-                new String[]{username});
 
-        try {
-            cursor.moveToFirst();
+        User user = mUserDao.queryBuilder()
+                .where(UserDao.Properties.MUserName.eq(username))
+                .unique();
 
-            if (cursor == null || cursor.getCount() == 0)
-                return false;
-
-            return true;
-        } finally {
-            cursor.close();
-        }
+        if(user == null)
+            return false;
+        else return true;
     }
 
-    //search Password
+    //search username and Password
     public boolean searchPassword(String username, String password) {
-        UserCursorWrapper cursor = (UserCursorWrapper) queryUsers(
-                null,
-                Cols.USERNAME + " = ? AND " + Cols.PASSWORD + " = ?",
-                new String[]{username, password});
+        QueryBuilder<User> qb = mUserDao.queryBuilder();
+        qb.where(qb.and(UserDao.Properties.MUserName.eq(username),UserDao.Properties.MPassword.eq(password)));
 
-        try {
-            cursor.moveToFirst();
+        User user = qb.unique();
 
-            if (cursor == null || cursor.getCount() == 0)
-                return false;
-
-            return true;
-        } finally {
-            cursor.close();
-        }
+        if(user == null)
+            return false;
+        else return true;
     }
 
 
     public void addUser(User user) {
-        ContentValues values = getContentValues(user);
-        mDatabase.insert(NAME, null, values);
+        mUserDao.insert(user);
     }
 
-    private ContentValues getContentValues(User user) {
-        ContentValues values = new ContentValues();
-        values.put(TaskDataBaseSchema.UserTable.Cols.UUID, user.getUUID().toString());
-        values.put(TaskDataBaseSchema.UserTable.Cols.USERNAME, user.getUserName());
-        values.put(TaskDataBaseSchema.UserTable.Cols.PASSWORD, user.getPassword());
-
-        return values;
-    }
-
-    private CursorWrapper queryUsers(String[] columns, String where, String[] whereArgs) {
-        Cursor cursor = mDatabase.query(NAME,
-                columns,
-                where,
-                whereArgs,
-                null,
-                null,
-                null);
-
-        return new UserCursorWrapper(cursor);
-    }
 }

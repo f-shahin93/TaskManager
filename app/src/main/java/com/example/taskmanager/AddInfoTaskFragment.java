@@ -187,7 +187,6 @@ public class AddInfoTaskFragment extends DialogFragment {
                             TasksRepository.getInstance(getContext()).addTasks(mTask);
 
                             Intent intent = new Intent();
-                            intent.putExtra(EXTRA_TASK_ADD_INFO, mTask);
                             Fragment fragment = getTargetFragment();
                             fragment.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
                         }
