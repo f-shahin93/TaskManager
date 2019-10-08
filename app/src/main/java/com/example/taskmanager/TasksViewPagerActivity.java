@@ -1,5 +1,6 @@
 package com.example.taskmanager;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -60,6 +61,12 @@ public class TasksViewPagerActivity extends AppCompatActivity {
         mViewPager.setOffscreenPageLimit(0);
 
         mAdapter = new FragmentStatePagerAdapter(getSupportFragmentManager()) {
+
+
+            @Override
+            public int getItemPosition(@NonNull Object object) {
+                return POSITION_NONE;
+            }
 
             @Override
             public Fragment getItem(int position) {
