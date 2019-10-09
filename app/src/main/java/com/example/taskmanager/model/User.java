@@ -8,6 +8,7 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Index;
 import org.greenrobot.greendao.annotation.Property;
 
+import java.util.Date;
 import java.util.UUID;
 import org.greenrobot.greendao.annotation.Generated;
 
@@ -28,23 +29,38 @@ public class User {
     @Property(nameInDb = "password")
     private String mPassword;
 
+    public Date getDate() {
+        return mDate;
+    }
+
+    public void setDate(Date date) {
+        mDate = date;
+    }
+
+    @Property(nameInDb = "date")
+    private Date mDate;
+
 
     public User(String userName, String password) {
         this.mUserName = userName;
         this.mPassword = password;
         this.mUUID = UUID.randomUUID();
+        this.mDate = new Date();
     }
 
     public User(UUID uuid) {
         this.mUUID = uuid;
+        this.mDate = new Date();
     }
 
-    @Generated(hash = 1696462684)
-    public User(Long id, UUID mUUID, String mUserName, String mPassword) {
+    @Generated(hash = 1923706488)
+    public User(Long id, UUID mUUID, String mUserName, String mPassword,
+            Date mDate) {
         this.id = id;
         this.mUUID = mUUID;
         this.mUserName = mUserName;
         this.mPassword = mPassword;
+        this.mDate = mDate;
     }
 
     @Generated(hash = 586692638)
@@ -101,5 +117,13 @@ public class User {
 
     public void setMPassword(String mPassword) {
         this.mPassword = mPassword;
+    }
+
+    public Date getMDate() {
+        return this.mDate;
+    }
+
+    public void setMDate(Date mDate) {
+        this.mDate = mDate;
     }
 }

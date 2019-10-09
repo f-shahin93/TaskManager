@@ -28,6 +28,11 @@ public class UserRepository {
         DaoMaster daoMaster = new DaoMaster(db);
         DaoSession daoSession = daoMaster.newSession();
         mUserDao = daoSession.getUserDao();
+
+        User user = new User("admin", "123456");
+        if (getUser(user.getUserName()) == null)
+            mUserDao.insert(user);
+
     }
 
     public static UserRepository getInstance(Context context) {
@@ -52,6 +57,14 @@ public class UserRepository {
                 .unique();
     }
 
+    //read
+    public List<User> getUsersList() {
+        return mUserDao.queryBuilder()
+                .where((UserDao.Properties.MUserName.notEq("admin")))
+                .list();
+
+    }
+
     //search by UUID
     public boolean searchUser(UUID id) {
 
@@ -59,7 +72,7 @@ public class UserRepository {
                 .where(UserDao.Properties.MUUID.eq(id))
                 .unique();
 
-        if(user == null)
+        if (user == null)
             return false;
         else return true;
     }
@@ -71,7 +84,7 @@ public class UserRepository {
                 .where(UserDao.Properties.MUserName.eq(username))
                 .unique();
 
-        if(user == null)
+        if (user == null)
             return false;
         else return true;
     }
@@ -79,18 +92,35 @@ public class UserRepository {
     //search username and Password
     public boolean searchPassword(String username, String password) {
         QueryBuilder<User> qb = mUserDao.queryBuilder();
-        qb.where(qb.and(UserDao.Properties.MUserName.eq(username),UserDao.Properties.MPassword.eq(password)));
+        qb.where(qb.and(UserDao.Properties.MUserName.eq(username), UserDao.Properties.MPassword.eq(password)));
 
         User user = qb.unique();
 
-        if(user == null)
+        if (user == null)
             return false;
         else return true;
     }
 
+    //get user by username
+    public User getUser(String username) {
+
+        User user = mUserDao.queryBuilder()
+                .where(UserDao.Properties.MUserName.eq(username))
+                .unique();
+
+        if (user == null)
+            return null;
+        else return user;
+
+    }
 
     public void addUser(User user) {
         mUserDao.insert(user);
+    }
+
+    //delete user
+    public void deleteUser(User user) {
+        mUserDao.delete(user);
     }
 
 }

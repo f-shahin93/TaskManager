@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/task_list_item"
+    android:id="@+id/user_list_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/back_edit_text"
@@ -13,49 +13,26 @@
 
 
     <ImageButton
-        android:id="@+id/ImageB_share"
+        android:id="@+id/ImageB_delete_user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:background="@drawable/ic_action_share"
+        android:background="@drawable/ic_trash_user"
         android:padding="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
-        android:id="@+id/ImageB_edit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:background="@drawable/ic_action_edit"
-        android:padding="15dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/ImageB_share"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageButton
-        android:id="@+id/ImageB_take_photo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:background="@drawable/ic_action_take_photo"
-        android:padding="15dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/ImageB_edit"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageButton
-        android:id="@+id/ImageV_itemTask"
+    <TextView
+        android:id="@+id/tv_itemUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerInParent="true"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/buttonback"
         android:padding="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -63,27 +40,42 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tv_title_itemList"
+        android:id="@+id/tv_username_itemList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:text="TitleTask"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/tv_itemUser"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_dateUser_itemList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_username_itemList"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="DateTime"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_countTaskUser_itemList"
+        app:layout_constraintStart_toEndOf="@+id/tv_itemUser"
+        app:layout_constraintTop_toBottomOf="@+id/tv_username_itemList" />
+
+    <TextView
+        android:id="@+id/tv_countTaskUser_itemList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_dateUser_itemList"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginBottom="8dp"
-        android:text="TitleTask"
+        android:text="numberTaskUser"
         android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/tv_date_itemList"
-        app:layout_constraintStart_toEndOf="@+id/ImageV_itemTask"
-        app:layout_constraintTop_toTopOf="@+id/ImageV_itemTask" />
-
-    <TextView
-        android:id="@+id/tv_date_itemList"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tv_title_itemList"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:text="DateTime"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toBottomOf="@+id/ImageV_itemTask"
-        app:layout_constraintStart_toEndOf="@+id/ImageV_itemTask" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tv_itemUser" />
 </androidx.constraintlayout.widget.ConstraintLayout>

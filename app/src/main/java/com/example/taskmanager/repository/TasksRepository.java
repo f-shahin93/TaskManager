@@ -8,9 +8,11 @@ import com.example.taskmanager.model.DaoMaster;
 import com.example.taskmanager.model.DaoSession;
 import com.example.taskmanager.model.Task;
 import com.example.taskmanager.model.TaskDao;
+import com.example.taskmanager.model.User;
 
 import org.greenrobot.greendao.query.QueryBuilder;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -46,10 +48,29 @@ public class TasksRepository {
         List<Task> mTaskListTodo = new ArrayList<>();
         List<Task> mTaskListDoing = new ArrayList<>();
         List<Task> mTaskListDone = new ArrayList<>();
+        List<Task> tasks;
 
-        List<Task> tasks = mTaskDao.queryBuilder()
+
+        boolean mIsAdmin;
+        User user = UserRepository.getInstance(mContext).getUser(username);
+        if (user.getUserName().equals("admin") && user.getPassword().equals("123456")) {
+            mIsAdmin = true;
+        } else {
+            mIsAdmin = false;
+        }
+
+
+        if (mIsAdmin) {
+            tasks = mTaskDao.loadAll();
+        } else {
+            tasks = mTaskDao.queryBuilder()
+                    .where(TaskDao.Properties.Username.eq(username))
+                    .list();
+        }
+
+        /*List<Task> tasks = mTaskDao.queryBuilder()
                 .where(TaskDao.Properties.Username.eq(username))
-                .list();
+                .list();*/
 
         for (int i = 0; i < tasks.size(); i++) {
 
@@ -84,6 +105,13 @@ public class TasksRepository {
         return mTaskDao.queryBuilder()
                 .where(TaskDao.Properties.MUUID.eq(id))
                 .unique();
+    }
+
+    //read
+    public List<Task> getTasks(String username) {
+        return mTaskDao.queryBuilder()
+                .where(TaskDao.Properties.Username.eq(username))
+                .list();
     }
 
     public Task getDateTask(String str, String username) {
@@ -139,6 +167,13 @@ public class TasksRepository {
     //delete All
     public void deleteAll() {
         mTaskDao.deleteAll();
+    }
+
+    public File getPhotoFile(Task task) {
+//        File photoFile = new File("/data/data/com.example.criminalIntent/files/" + crime.getPhotoName());
+//        File photoFile = new File(rootPath + "/" + crime.getPhotoName());
+
+        return new File(mContext.getFilesDir(), task.getPhotoName());
     }
 
 }

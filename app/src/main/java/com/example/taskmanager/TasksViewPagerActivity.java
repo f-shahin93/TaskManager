@@ -12,7 +12,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.taskmanager.model.User;
 import com.example.taskmanager.repository.TasksRepository;
+import com.example.taskmanager.repository.UserRepository;
 import com.google.android.material.tabs.TabItem;
 import com.google.android.material.tabs.TabLayout;
 
@@ -38,6 +40,7 @@ public class TasksViewPagerActivity extends AppCompatActivity {
     private FragmentStatePagerAdapter mAdapter;
     private List<TasksListFragment> mListFragments = new ArrayList<>();
     private HashMap<String, Fragment> mListHashMap = new HashMap<>();
+    private boolean mIsAdmin;
 
 
     @Override
@@ -114,7 +117,6 @@ public class TasksViewPagerActivity extends AppCompatActivity {
 
         };
         mViewPager.setAdapter(mAdapter);
-
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {

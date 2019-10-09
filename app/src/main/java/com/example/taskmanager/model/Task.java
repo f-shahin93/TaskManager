@@ -11,7 +11,6 @@ import org.greenrobot.greendao.annotation.Property;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Random;
 import java.util.UUID;
 import org.greenrobot.greendao.annotation.Generated;
@@ -191,6 +190,10 @@ public class Task{
 
     public void setMState(TasksState mState) {
         this.mState = mState;
+    }
+
+    public String getPhotoName() {
+        return "IMG_" + mUUID + ".jpg";
     }
 
     /*@Override

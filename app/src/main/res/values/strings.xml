@@ -29,9 +29,19 @@
     <string name="delete_account">Delete Account</string>
     <string name="search_task">Search Task</string>
     <string name="logout_menu">Logout</string>
+    <string name="task_share">
+        The Title Task is %1$s, description is %2$s.This task on date %3$s, time %4$s and Task state is %5$s.
+    </string>
+
+    <string name="send_task">Send task share via</string>
+
+    <string name="task_share_subject">TaskManager Share</string>
+    <string name="see_all_task">See All Task</string>
+    <string name="see_all_users">See all Users</string>
     <string-array name="array_state_spinner">
         <item>TODO</item>
         <item>DOING</item>
         <item>DONE</item>
     </string-array>
+
 </resources>
