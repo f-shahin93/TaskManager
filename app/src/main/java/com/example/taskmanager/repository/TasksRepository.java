@@ -164,6 +164,17 @@ public class TasksRepository {
         deleteTask(getTask(id));
     }
 
+    //delete task by Username
+    public  void deleteTask(User user){
+        List<Task> list = getTasks(user.getUserName());
+        for(int i = 0 ;i<list.size();i++){
+
+            mTaskDao.delete(list.get(i));
+
+        }
+
+    }
+
     //delete All
     public void deleteAll() {
         mTaskDao.deleteAll();

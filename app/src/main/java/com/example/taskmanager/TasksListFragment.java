@@ -282,12 +282,12 @@ public class TasksListFragment extends Fragment {
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, mPhotoUri);
 
-                    List<ResolveInfo> cameraActivities = getActivity().getPackageManager()
+                    /*List<ResolveInfo> cameraActivities = getActivity().getPackageManager()
                             .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
                     for (ResolveInfo resolveInfo : cameraActivities) {
                         getActivity().grantUriPermission(resolveInfo.activityInfo.packageName,
                                 mPhotoUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    }
+                    }*/
 
                     startActivityForResult(intent, REQUEST_CODE_CAPTURE_IMAGE);
 

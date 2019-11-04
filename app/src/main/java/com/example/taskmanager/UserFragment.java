@@ -134,7 +134,9 @@ public class UserFragment extends Fragment {
             mImageBDeleteUser.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    TasksRepository.getInstance(getContext()).deleteTask(mUserVH);
                     UserRepository.getInstance(getContext()).deleteUser(mUserVH);
+                    updateUI();
                 }
             });
 

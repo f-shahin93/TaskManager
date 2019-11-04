@@ -7,10 +7,9 @@
     android:layout_height="wrap_content"
     android:background="@drawable/back_edit_text"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:paddingBottom="8dp"
+    android:padding="5dp"
+    android:layout_margin="5dp"
     tools:context=".TasksListFragment">
-
 
     <ImageButton
         android:id="@+id/ImageB_delete_user"

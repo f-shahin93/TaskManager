@@ -1,5 +1,8 @@
 package com.example.taskmanager.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.example.taskmanager.greendao.StateConverter;
 import com.example.taskmanager.greendao.UuidConverter;
 
@@ -16,7 +19,7 @@ import java.util.UUID;
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity (nameInDb = "Task")
-public class Task{
+public class Task implements Parcelable {
 
     @Id (autoincrement = true)
     private Long id;
@@ -81,6 +84,29 @@ public class Task{
         this.mState = mState;
         this.username = username;
     }
+
+    protected Task(Parcel in) {
+        if (in.readByte() == 0) {
+            id = null;
+        } else {
+            id = in.readLong();
+        }
+        mTaskTitle = in.readString();
+        mDescription = in.readString();
+        username = in.readString();
+    }
+
+    public static final Creator<Task> CREATOR = new Creator<Task>() {
+        @Override
+        public Task createFromParcel(Parcel in) {
+            return new Task(in);
+        }
+
+        @Override
+        public Task[] newArray(int size) {
+            return new Task[size];
+        }
+    };
 
     public String getUsername() {
         return username;
@@ -194,6 +220,24 @@ public class Task{
 
     public String getPhotoName() {
         return "IMG_" + mUUID + ".jpg";
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        if (id == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeLong(id);
+        }
+        parcel.writeString(mTaskTitle);
+        parcel.writeString(mDescription);
+        parcel.writeString(username);
     }
 
     /*@Override
