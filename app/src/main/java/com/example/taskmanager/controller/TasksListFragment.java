@@ -1,31 +1,26 @@
-package com.example.taskmanager;
+package com.example.taskmanager.controller;
 
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
-import androidx.core.app.ShareCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.databinding.DataBindingUtil;
 
 import android.provider.MediaStore;
 import android.util.Log;
@@ -35,13 +30,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.taskmanager.R;
 import com.example.taskmanager.model.Task;
 import com.example.taskmanager.model.User;
 import com.example.taskmanager.repository.TasksRepository;
@@ -53,6 +47,8 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.provider.MediaStore.ACTION_IMAGE_CAPTURE;
 
 
 /**
@@ -69,6 +65,7 @@ public class TasksListFragment extends Fragment {
     public static final String ARG_NUM_CURENT_PAGE = "Arg numCurentPage";
     public static final String ARG_USERNAME = "Arg username";
     public static final int REQUEST_CODE_CAPTURE_IMAGE = 3;
+    public static final int REQUEST_IMAGE_GET = 4;
     private List<Task> mTasksListFragments = new ArrayList();
     private RecyclerView mRecyclerView;
     private MyAdapter mAdapter;
@@ -81,7 +78,9 @@ public class TasksListFragment extends Fragment {
     private SearchView mSearchView;
     private File mPhotoFile;
     private Uri mPhotoUri;
-    private ImageButton mTVitem;
+    private String photoPath = "";
+    private Bitmap mBitmap;
+    private ImageButton mIbPhotoTask;
     private boolean mIsAdmin;
 
 
@@ -121,6 +120,7 @@ public class TasksListFragment extends Fragment {
         Log.d(TAG, "onCreateView()" + " " + mNumCurentPage);
         mFloatingActionButton = view.findViewById(R.id.floatingaction_add);
         mIVbackEmptyList = view.findViewById(R.id.backEmptyTask);
+        mIbPhotoTask = new ImageButton(getContext());
 
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,7 +150,7 @@ public class TasksListFragment extends Fragment {
         }
 
         if (mIsAdmin) {
-            mTasksListFragments = mTasksRepository.getTasksList(mNumCurentPage,mUsername);
+            mTasksListFragments = mTasksRepository.getTasksList(mNumCurentPage, mUsername);
         }
 
 
@@ -214,7 +214,7 @@ public class TasksListFragment extends Fragment {
         public static final String AUTHORITY_FILE_PROVIDER = "com.example.taskmanager.fileProvider";
         private TextView mTVTitleTask;
         private TextView mTVDateTask;
-        //private TextView mTVitem;
+        private ImageView mIbPhotoTask;
         private Task mTaskVH;
         private ImageButton mIBshare;
         private ImageButton mIBedit;
@@ -224,13 +224,11 @@ public class TasksListFragment extends Fragment {
             super(itemView);
             mTVTitleTask = itemView.findViewById(R.id.tv_title_itemList);
             mTVDateTask = itemView.findViewById(R.id.tv_date_itemList);
-            mTVitem = itemView.findViewById(R.id.ImageV_itemTask);
+            mIbPhotoTask = itemView.findViewById(R.id.ImageV_itemTask);
             mIBshare = itemView.findViewById(R.id.ImageB_share);
             mIBedit = itemView.findViewById(R.id.ImageB_edit);
             mIBtakePhoto = itemView.findViewById(R.id.ImageB_take_photo);
 
-            if (mTaskVH != null)
-                mPhotoFile = TasksRepository.getInstance(getContext()).getPhotoFile(mTaskVH);
 
             mIBedit.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -272,7 +270,14 @@ public class TasksListFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
 
-                    if (mPhotoFile == null)
+                   /* if (mTaskVH != null)
+                        mPhotoFile = TasksRepository.getInstance(getContext()).getPhotoFile(mTaskVH);
+
+                   /* showPictureDialog(mTaskVH);
+                    mTaskVH.setPhotoPath(photoPath);
+                    mIbPhotoTask.setImageBitmap(mBitmap);*/
+
+                   /* if (mPhotoFile == null)
                         return;
 
                     mPhotoUri = FileProvider.getUriForFile(getContext(),
@@ -280,7 +285,7 @@ public class TasksListFragment extends Fragment {
                             mPhotoFile);
 
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, mPhotoUri);
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, mPhotoUri);*/
 
                     /*List<ResolveInfo> cameraActivities = getActivity().getPackageManager()
                             .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
@@ -289,32 +294,52 @@ public class TasksListFragment extends Fragment {
                                 mPhotoUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                     }*/
 
-                    startActivityForResult(intent, REQUEST_CODE_CAPTURE_IMAGE);
+                  //  startActivityForResult(intent, REQUEST_CODE_CAPTURE_IMAGE);
+
+                    //updatePhotoView();
+                    //mTaskVH.setPhotoPath(photoPath);
+                    //mIbPhotoTask.setImageBitmap(mBitmap);
+
 
                 }
             });
-
         }
 
         public void bind(Task task) {
             mTaskVH = task;
+            if(photoPath != null && mBitmap!= null ){
+                mTaskVH.setPhotoPath(photoPath);
+                mIbPhotoTask.setImageBitmap(mBitmap);
+            }
+
             /*if (!mTaskVH.getTaskTitle().equals("")) {
                 mTask = mTaskVH;
-                mTVitem.setBackgroundResource(mTask.getTaskTitle().charAt(0));
-                //mTVitem.setText(String.valueOf(mTaskVH.getTaskTitle().charAt(0)));
+                mIbPhotoTask.setBackgroundResource(mTask.getTaskTitle().charAt(0));
+                //mIbPhotoTask.setText(String.valueOf(mTaskVH.getTaskTitle().charAt(0)));
             }*/
-            if (mPhotoFile == null || !mPhotoFile.exists()) {
-               // mTVitem.setBackgroundResource(mTaskVH.getTaskTitle().charAt(0));
+            /*if (mPhotoFile == null || !mPhotoFile.exists()) {
+               // mIbPhotoTask.setBackgroundResource(mTaskVH.getTaskTitle().charAt(0));
             } else {
                 Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getAbsolutePath(), getActivity());
-                mTVitem.setImageBitmap(bitmap);
-            }
+                mIbPhotoTask.setImageBitmap(bitmap);
+            }*/
         }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_CAPTURE_IMAGE) {
+            Log.d("MyLog","jhkhj");
+
+            updatePhotoView();
+
+            getActivity().revokeUriPermission(
+                    mPhotoUri,
+                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        }
+
 
         if (resultCode == Activity.RESULT_CANCELED || data == null)
             return;
@@ -327,21 +352,26 @@ public class TasksListFragment extends Fragment {
             updateUI();
 
         }
-        if (requestCode == REQUEST_CODE_CAPTURE_IMAGE) {
-            updatePhotoView();
 
-            getActivity().revokeUriPermission(
-                    mPhotoUri,
-                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        if (requestCode == REQUEST_IMAGE_GET) {
+            Uri fullPhotoUri = data.getData();
+            //mIbPhotoTask.setImageBitmap(BitmapFactory.decodeFile(setPathForGallery(fullPhotoUri)));
+            //mTask.setPhotoPath(setPathForGallery(fullPhotoUri));
+            mBitmap = BitmapFactory.decodeFile(setPathForGallery(fullPhotoUri));
+            photoPath = setPathForGallery(fullPhotoUri);
         }
+
     }
 
     private void updatePhotoView() {
         if (mPhotoFile == null || !mPhotoFile.exists()) {
-            mTVitem.setBackgroundResource(mTask.getTaskTitle().charAt(0));
+            //mIbPhotoTask.setBackgroundResource(mTask.getTaskTitle().charAt(0));
         } else {
             Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getAbsolutePath(), getActivity());
-            mTVitem.setImageBitmap(bitmap);
+            //mIbPhotoTask.setImageBitmap(bitmap);
+            //mTask.setPhotoPath(mPhotoFile.getAbsolutePath());
+            mBitmap = bitmap;
+            photoPath = mPhotoFile.getAbsolutePath();
         }
     }
 
@@ -360,7 +390,7 @@ public class TasksListFragment extends Fragment {
         }
 
         if (mIsAdmin) {
-            mTasksListFragments = mTasksRepository.getTasksList(mNumCurentPage,mUsername);
+            mTasksListFragments = mTasksRepository.getTasksList(mNumCurentPage, mUsername);
         }
 
         if (mTasksListFragments.size() > 0)
@@ -374,6 +404,7 @@ public class TasksListFragment extends Fragment {
     }
 
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -442,7 +473,6 @@ public class TasksListFragment extends Fragment {
                             }
                         }).create();
                 alert.show();
-                //getActivity().recreate();
                 return true;
             }
             case R.id.search_menu_item: {
@@ -453,11 +483,11 @@ public class TasksListFragment extends Fragment {
                 getActivity().finish();
                 return true;
             }
-            case R.id.admin_menu_item:{
-                if(mUsername.equals("admin") && UserRepository.getInstance(getContext()).getUser(mUsername).getPassword().equals("123456")){
+            case R.id.admin_menu_item: {
+                if (mUsername.equals("admin") && UserRepository.getInstance(getContext()).getUser(mUsername).getPassword().equals("123456")) {
                     startActivity(UserActivity.newIntent(getContext()));
                 }
-                Toast.makeText(getActivity(),"only Admin see this feature!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "only Admin see this feature!", Toast.LENGTH_SHORT).show();
             }
             default: {
                 return super.onOptionsItemSelected(item);
@@ -476,6 +506,73 @@ public class TasksListFragment extends Fragment {
                 timeString,
                 task.getState().name());
     }
+
+    private void showPictureDialog(final Task task) {
+        AlertDialog.Builder pictureDialog = new AlertDialog.Builder(getActivity());
+        pictureDialog.setTitle("Select Action");
+        String[] pictureDialogItems = {
+                "From Gallery",
+                "From Camera"};
+        pictureDialog.setItems(pictureDialogItems,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0:
+                                choosePhotoFromGallery();
+                                break;
+                            case 1:
+                                takePhotoFromCamera(task);
+                                break;
+                        }
+                    }
+                });
+        pictureDialog.show();
+    }
+
+    public void choosePhotoFromGallery() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            intent = Intent.createChooser(intent, "Take picture");
+            startActivityForResult(intent, REQUEST_IMAGE_GET);
+        }
+    }
+
+    private void takePhotoFromCamera(Task task) {
+        Intent intent = new Intent(ACTION_IMAGE_CAPTURE);
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            // Create the File where the photo should go
+            mPhotoFile = TasksRepository.getInstance(getContext()).getPhotoFile(task);
+            // Continue only if the File was successfully created
+            if (mPhotoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(getContext(),
+                        "com.example.taskmanager",
+                        mPhotoFile);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                intent = Intent.createChooser(intent, "Capture photo");
+                startActivityForResult(intent, REQUEST_CODE_CAPTURE_IMAGE);
+            }
+        }
+    }
+
+    private String setPathForGallery(Uri uri) {
+        String path = null;
+        if (Build.VERSION.SDK_INT < 11)
+            path = RealPathUtils.getRealPathFromURI_BelowAPI11(getContext(), uri);
+
+            // SDK >= 11 && SDK < 19
+        else if (Build.VERSION.SDK_INT < 19)
+            path = RealPathUtils.getRealPathFromURI_API11to18(getContext(), uri);
+
+            // SDK > 19 (Android 4.4)
+        else
+            path = RealPathUtils.getRealPathFromURI_API19(getContext(), uri);
+
+        Log.e(TAG, "setPathForGallery: PATH= " + path);
+        return path;
+    }
+
 
     /*  @Override
       public void onSaveInstanceState(@NonNull Bundle outState) {

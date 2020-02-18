@@ -1,4 +1,4 @@
-package com.example.taskmanager;
+package com.example.taskmanager.controller;
 
 import android.app.Activity;
 import android.graphics.Bitmap;

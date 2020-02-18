@@ -187,4 +187,5 @@ public class TasksRepository {
         return new File(mContext.getFilesDir(), task.getPhotoName());
     }
 
+
 }

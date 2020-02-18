@@ -1,4 +1,4 @@
-package com.example.taskmanager;
+package com.example.taskmanager.controller;
 
 
 import android.app.Activity;
@@ -16,6 +16,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
+
+import com.example.taskmanager.R;
 
 import java.util.Calendar;
 import java.util.Date;

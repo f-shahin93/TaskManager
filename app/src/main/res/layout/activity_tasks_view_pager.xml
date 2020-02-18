@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".TasksViewPagerActivity"
+    tools:context=".controller.TasksViewPagerActivity"
     android:id="@+id/activity_tasksviewPager">
 
     <com.google.android.material.tabs.TabLayout

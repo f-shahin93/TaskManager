@@ -1,28 +1,23 @@
-package com.example.taskmanager;
+package com.example.taskmanager.controller;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
-import com.example.taskmanager.model.User;
+import com.example.taskmanager.R;
 import com.example.taskmanager.repository.TasksRepository;
-import com.example.taskmanager.repository.UserRepository;
 import com.google.android.material.tabs.TabItem;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 
 public class TasksViewPagerActivity extends AppCompatActivity {

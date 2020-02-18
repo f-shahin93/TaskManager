@@ -9,7 +9,7 @@
         android:id="@+id/add_info_task"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".AddInfoTaskFragment">
+        tools:context=".controller.AddInfoTaskFragment">
 
         <Button
             android:id="@+id/button_addDatePicker"

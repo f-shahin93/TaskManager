@@ -48,6 +48,10 @@ public class Task implements Parcelable {
     @Property(nameInDb = "username")
     private String username;
 
+    @Property (nameInDb = "photopath")
+    private String photoPath;
+
+
     public Task() {
         mUUID = UUID.randomUUID();
         mDate = new Date();
@@ -72,9 +76,10 @@ public class Task implements Parcelable {
         }
     }
 
-    @Generated(hash = 596882403)
+    @Generated(hash = 247413777)
     public Task(Long id, UUID mUUID, String mTaskTitle, String mDescription,
-            Date mDate, Date mTime, TasksState mState, String username) {
+            Date mDate, Date mTime, TasksState mState, String username,
+            String photoPath) {
         this.id = id;
         this.mUUID = mUUID;
         this.mTaskTitle = mTaskTitle;
@@ -83,6 +88,7 @@ public class Task implements Parcelable {
         this.mTime = mTime;
         this.mState = mState;
         this.username = username;
+        this.photoPath = photoPath;
     }
 
     protected Task(Parcel in) {
@@ -107,6 +113,14 @@ public class Task implements Parcelable {
             return new Task[size];
         }
     };
+
+    public String getPhotoPath() {
+        return photoPath;
+    }
+
+    public void setPhotoPath(String photoPath) {
+        this.photoPath = photoPath;
+    }
 
     public String getUsername() {
         return username;
@@ -240,12 +254,4 @@ public class Task implements Parcelable {
         parcel.writeString(username);
     }
 
-    /*@Override
-    public String toString() {
-        System.out.println();
-        return "Tasks{" +
-                "mTaskTitle='" + mTaskTitle + '\'' +
-                ", mState=" + mState +
-                '}';
-    }*/
 }

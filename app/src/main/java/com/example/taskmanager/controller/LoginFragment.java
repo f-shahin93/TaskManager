@@ -1,4 +1,4 @@
-package com.example.taskmanager;
+package com.example.taskmanager.controller;
 
 
 import android.app.Activity;
@@ -15,7 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.taskmanager.model.User;
+import com.example.taskmanager.R;
 import com.example.taskmanager.repository.UserRepository;
 
 

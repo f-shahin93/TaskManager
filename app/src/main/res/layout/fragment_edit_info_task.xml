@@ -5,7 +5,7 @@
     android:id="@+id/edit_info_task"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EditInfoTaskFragment">
+    tools:context=".controller.EditInfoTaskFragment">
 
     <Button
         android:id="@+id/button_editDatePicker"

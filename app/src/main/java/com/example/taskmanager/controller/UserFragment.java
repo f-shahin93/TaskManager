@@ -1,7 +1,5 @@
-package com.example.taskmanager;
+package com.example.taskmanager.controller;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,10 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.SearchView;
 import android.widget.TextView;
 
-import com.example.taskmanager.model.Task;
+import com.example.taskmanager.R;
 import com.example.taskmanager.model.User;
 import com.example.taskmanager.repository.TasksRepository;
 import com.example.taskmanager.repository.UserRepository;

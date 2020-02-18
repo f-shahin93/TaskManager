@@ -1,4 +1,4 @@
-package com.example.taskmanager;
+package com.example.taskmanager.controller;
 
 
 import android.app.Activity;
@@ -23,6 +23,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.taskmanager.R;
 import com.example.taskmanager.model.Task;
 import com.example.taskmanager.model.TasksState;
 import com.example.taskmanager.repository.TasksRepository;
